@@ -4,13 +4,18 @@
 *******************************************************************************/
 
 export const resizeArrays = function(arrays, array) {
-  const smallestSize = Math.min(...arrays.map(array => array.length));
+  let smallestSize = Math.min(...arrays.map(array => array.length));
+
+  if (array.length < smallestSize) {
+    smallestSize = array.length;
+  }
 
   for (let i = 0; i < arrays.length; i++) {
     if (arrays[i].length > smallestSize) {
       arrays[i].splice(smallestSize, arrays[i].length - smallestSize);
     }
   }
+
   if (array.length > smallestSize) {
     array.splice(smallestSize, array.length - smallestSize);
   }

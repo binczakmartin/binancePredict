@@ -9,7 +9,6 @@ import fs from 'fs';
 import moment from 'moment';
 import { quoteAsset, intervals } from '../constants.js';
 
-/* get markets data list */
 export const getMarkets = async function () {
   let data = [];
 
@@ -33,10 +32,9 @@ export const getMarkets = async function () {
   })
 };
 
-/* get all interval candlestick data by pair */
-export const getKlines = async function (symbol) {
+export const saveKlines = async function (symbol) {
   let dataObj = {};
-  const date	= moment();
+  const date = moment();
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -49,7 +47,6 @@ export const getKlines = async function (symbol) {
             'interval': interval
           }
         });
-        // sleep to reduce call weight and avoid ban
         await new Promise(resolve => setTimeout(resolve, 30));
         if (response.headers['x-mbx-used-weight-1m'] > 850) {
           await new Promise(resolve => setTimeout(resolve, 60000));
@@ -66,19 +63,18 @@ export const getKlines = async function (symbol) {
   })
 };
 
-/* get the data for all the pairs by chunks */
-export const getAllKlines = async function () {
+export const saveAllKlines = async function () {
   let dataObj = {}
   let pTab = [];
 
   return new Promise(async (resolve, reject) => {
     try {
       let data = await getMarkets();
-      const length = Math.floor(data.length / 2); // only top volume for the moment to avoid ban
+      const length = Math.floor(data.length);
       data = data.slice(0, length);
       for (let elem of data) {
         pTab.push(getKlines(elem.symbol));
-        if (pTab.length % 20 == 0) { // avoid ban only chunks of 20
+        if (pTab.length % 25 == 0) {
           await Promise.all(pTab);
           await new Promise(resolve => setTimeout(resolve, 2600));
           pTab = [];

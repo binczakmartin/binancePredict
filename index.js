@@ -5,7 +5,7 @@
 
 import argsParser from 'args-parser';
 import { title } from './src/utils/ui.js';
-import { getAllKlines, getMarkets } from './src/binance/getKlines.js';
+import { saveAllKlines, getMarkets } from './src/binance/getKlines.js';
 import { trainModel } from './src/tensorflow/train.js';
 
 const parsearguments = async function () {
@@ -13,7 +13,7 @@ const parsearguments = async function () {
   console.log('args => ', args);
 
   if (args['g']) {
-    await getAllKlines();
+    await saveAllKlines();
   }
   if (args['t']) {
     const markets = await getMarkets();

@@ -3,13 +3,20 @@
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-const tf = require('@tensorflow/tfjs');
+import tf from "@tensorflow/tfjs-node";
+import { intervals } from "../constants";
 
-// Make predictions on new data
-const newValues = [[100, 102, 1000000, 105, 98], [110, 112, 1200000, 115, 108]];
+export const predictNextClose = async function (date, pair) {
+  const model = await loadModel();
+  const features = [];
 
-const newTensor = tf.tensor2d(newValues);
-const predictions = model.predict(newTensor);
+  intervals.map((interval) => features.push(getFeatures(pair, date, interval)));
 
-// Print predictions
-predictions.dataSync().forEach(prediction => console.log(prediction));
+  const normalizedArrays = resizeArrays(features);
+  const tensors = normalizedArrays.features.map(f => tf.tensor2d(f, [f.length, f[0].length]));
+  const concatenated = tf.layers.concatenate().apply(tensors);
+  const prediction = model.predict(concatenated);
+  const output = prediction.dataSync()[0];
+
+  return output;
+};
