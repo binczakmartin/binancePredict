@@ -7,12 +7,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import moment from 'moment';
-
-/* get only USDT pairs */
-const quoteAsset = ["USDT"];
-
-/* time intervals 1m, 5m, 15m, 30m, 1h ...  */
-const intervals = ["5m", "15m", "1h", "4h", "1d"];
+import { quoteAsset, intervals } from '../constants.js';
 
 /* get markets data list */
 export const getMarkets = async function () {
