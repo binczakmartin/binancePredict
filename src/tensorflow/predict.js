@@ -1,45 +1,15 @@
 /*******************************************************************************
-** Predict future close price
+** Train the model
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-// Import required libraries
 const tf = require('@tensorflow/tfjs');
 
-// Generate training data
-const generateData = (numSamples) => {
-  const data = [];
-  for (let i = 0; i < numSamples; i++) {
-    const open = Math.random() * 100;
-    const close = Math.random() * 100;
-    const volume = Math.random() * 1000000;
-    const high = Math.random() * 100;
-    const low = Math.random() * 100;
-    const nextDayClose = Math.random() * 100;
-    data.push([open, close, volume, high, low, nextDayClose]);
-  }
-  return data;
-}
+// Make predictions on new data
+const newValues = [[100, 102, 1000000, 105, 98], [110, 112, 1200000, 115, 108]];
 
-const data = generateData(1000);
+const newTensor = tf.tensor2d(newValues);
+const predictions = model.predict(newTensor);
 
-// Prepare data for model training
-const xs = tf.tensor2d(data.map(row => row.slice(0, 5)));
-const ys = tf.tensor2d(data.map(row => [row[5]]));
-
-// Define model architecture
-const model = tf.sequential();
-model.add(tf.layers.dense({ units: 32, inputShape: [5], activation: 'relu' }));
-model.add(tf.layers.dense({ units: 1, activation: 'linear' }));
-
-// Compile model
-model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
-
-// Train model
-model.fit(xs, ys, {
-  epochs: 100,
-  validationSplit: 0.2,
-  shuffle: true,
-}).then(history => {
-  console.log(history);
-});
+// Print predictions
+predictions.dataSync().forEach(prediction => console.log(prediction));

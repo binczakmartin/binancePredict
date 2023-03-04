@@ -4,15 +4,15 @@
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-import { getDateStr } from '../utils/misc.js';
 import axios from 'axios';
 import fs from 'fs';
+import moment from 'moment';
 
 /* get only USDT pairs */
 const quoteAsset = ["USDT"];
 
 /* time intervals 1m, 5m, 15m, 30m, 1h ...  */
-const intervals = ["1h"];
+const intervals = ["5m", "15m", "1h", "4h", "1d"];
 
 /* get markets data list */
 export const getMarkets = async function () {
@@ -41,6 +41,7 @@ export const getMarkets = async function () {
 /* get all interval candlestick data by pair */
 export const getKlines = async function (symbol) {
   let dataObj = {};
+  const date	= moment();
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -58,7 +59,7 @@ export const getKlines = async function (symbol) {
         if (response.headers['x-mbx-used-weight-1m'] > 850) {
           await new Promise(resolve => setTimeout(resolve, 60000));
         }
-        const folder = `./data/${getDateStr()}/${symbol}/${interval}/`;
+        const folder = `./data/${date.format('YYYYMMDD')}/${symbol}/${interval}/`;
         await fs.promises.mkdir(folder, { recursive: true });
         fs.writeFileSync(`${folder}/kline.json`, JSON.stringify(response.data));
         dataObj[symbol][interval] = response.data;
