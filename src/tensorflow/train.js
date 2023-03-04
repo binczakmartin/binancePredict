@@ -51,7 +51,7 @@ const loadModel = async function() {
     for (let interval of intervals) {
       const input = tf.input({ shape: 12 });
       inputs.push(input);
-      denses.push(tf.layers.dense({ units: 10, activation: "relu" }).apply(input));
+      denses.push(tf.layers.dense({ units: 32, activation: "relu" }).apply(input));
     }
     const concatenate = tf.layers.concatenate().apply(denses);
     const output = tf.layers.dense({ units: 1, activation: "linear" }).apply(concatenate);
@@ -75,11 +75,12 @@ export const trainModel = async function (date, pair) {
   normalizedArrays = resizeArrays(features, labels);
 
   for (let feature of normalizedArrays.features) {
-    tensors.push(tf.tensor2d(feature, [feature.length, feature[0].length]));
+    if (!feature.length) return;
+      tensors.push(tf.tensor2d(feature, [feature.length, feature[0].length]));
   }
 
   model.compile({ loss: 'meanSquaredError', optimizer: 'adam' });
-  await model.fit(tensors, tf.tensor1d(normalizedArrays.labels), { epochs: 100 });
+  await model.fit(tensors, tf.tensor1d(normalizedArrays.labels), { epochs: 25 });
 
   await model.save(`file://${resolve(savedModelPath)}`);
   console.log('Saved model to disk');
