@@ -4,27 +4,27 @@
 *******************************************************************************/
 
 import argsParser from 'args-parser';
-import { title } from './src/utils/ui.js';
-import { saveAllKlines, getMarkets } from './src/binance/getKlines.js';
+import { printAsciiArt, help } from './src/utils/ui.js';
+import { saveAllCandles } from './src/binance/candles.js';
+import { getMarkets } from './src/binance/markets.js'
 import { trainModel } from './src/tensorflow/train.js';
 
 const parsearguments = async function () {
   const args = argsParser(process.argv);
-  console.log('args => ', args);
 
   if (args['g']) {
-    await saveAllKlines();
-  }
-  if (args['t']) {
+    console.log('Downloading and saving Binance data to data folder...');
+    await saveAllCandles();
+  } else if (args['t']) {
+    console.log('Training TensorFlow model for all trading pairs...');
     const markets = await getMarkets();
     for (let market of markets) {
-      await trainModel('20230304', market.symbol);
+      await trainModel('20230305', market.symbol);
     }
-  }
-  else {
-    console.log('help');
+  } else {
+    help();
   }
 }
 
-title();
+printAsciiArt();
 parsearguments();
