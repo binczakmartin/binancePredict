@@ -3,7 +3,7 @@
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-import * as tf from '@tensorflow/tfjs-node-gpu';
+import * as tf from '@tensorflow/tfjs-node';
 import { getFeatures } from "../utils/transform.js";
 import { loadModel } from './model.js';
 

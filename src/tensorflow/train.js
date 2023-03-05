@@ -3,7 +3,7 @@
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-import * as tf from '@tensorflow/tfjs-node-gpu';
+import * as tf from '@tensorflow/tfjs-node';
 import { resolve } from 'path';
 import { loadModel } from './model.js';
 import { savedModelPath } from '../constants.js';
@@ -25,14 +25,14 @@ export const trainModel = async (date, pair) => {
   // Define early stopping
   const earlyStop = tf.callbacks.earlyStopping({
     monitor: 'loss',
-    patience: 10,
+    patience: 25,
     restoreBestModel: true,
   });
 
   // Train model with early stopping
   const history = await tf.profile(() => model.fit(X_train, y_train, {
     epochs: 250,
-    batchSize: 256, // Increase batch size for parallelism
+    batchSize: 32, // Increase batch size for parallelism
     validationData: [X_test, y_test],
     callbacks: [earlyStop], // Add early stopping callback
     verbose: 1, // Print training progress
