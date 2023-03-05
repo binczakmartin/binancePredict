@@ -24,7 +24,7 @@ export const trainModel = async (date, pair) => {
 
   // Define early stopping
   const earlyStop = tf.callbacks.earlyStopping({
-    monitor: 'loss',
+    monitor: 'val_loss',
     patience: 25,
     restoreBestModel: true,
   });
