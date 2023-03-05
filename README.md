@@ -22,4 +22,4 @@ install dependencies:
 
 launch:
 
-    yarn start
+    node --stack-size=20000 index.js train

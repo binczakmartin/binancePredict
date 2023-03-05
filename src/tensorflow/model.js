@@ -54,12 +54,17 @@ export const loadModel = async function (pair) {
   const dropout5 = tf.layers.dropout({ rate: 0.2 }).apply(dense5);
   const output = tf.layers.dense({
     units: 1,
-    activation: "sigmoid",
+    activation: "relu",
     kernelRegularizer: tf.regularizers.l2({ l2: 0.01 }),
   }).apply(dropout5);
 
   model = tf.model({ inputs: input, outputs: output });
-  model.compile({ loss: "binaryCrossentropy", optimizer: tf.train.adam() });
+  model.compile({
+    loss: "meanAbsoluteError",
+    optimizer: tf.train.adam(0.001),
+    metrics: ['accuracy'],
+    weightedRegularization: {l1: 0.01, l2: 0.01}
+  });
 
   return model;
 };
