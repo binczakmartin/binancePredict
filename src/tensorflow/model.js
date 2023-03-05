@@ -10,7 +10,14 @@ export const loadModel = async function (pair) {
     model = await tf.loadLayersModel(
       `file://${resolve(savedModelPath)}/${pair}/model.json`
     );
-    model.compile({ loss: "meanSquaredLogarithmicError", optimizer: "adam" });
+
+    model.compile({
+      loss: "meanAbsoluteError",
+      optimizer: tf.train.adam(0.001),
+      metrics: ['accuracy'],
+      weightedRegularization: {l1: 0.01, l2: 0.01}
+    });
+
     return model;
   }
 
