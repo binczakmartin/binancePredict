@@ -4,7 +4,7 @@
 *******************************************************************************/
 
 import fs from "fs";
-import tf from "@tensorflow/tfjs-node";
+import * as tf from '@tensorflow/tfjs-node-gpu';
 import { savedModelPath } from "../constants.js";
 import { resolve } from "path";
 

@@ -3,17 +3,15 @@
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-import * as tf from '@tensorflow/tfjs';
-import '@tensorflow/tfjs-backend-wasm';
+import * as tf from '@tensorflow/tfjs-node-gpu';
 import { resolve } from 'path';
 import { loadModel } from './model.js';
 import { savedModelPath } from '../constants.js';
-import { getFeatures, setThreadsCount } from '../utils/transform.js';
+import { getFeatures } from '../utils/transform.js';
 
 export const trainModel = async (date, pair) => {
-  await tf.setBackend('wasm');
-  
-  setThreadsCount(8);
+  tf.enableProdMode();
+  tf.setBackend('tensorflow');
 
   const model = await loadModel(pair);
   const dataset = getFeatures(pair, date, '1h');
@@ -32,14 +30,17 @@ export const trainModel = async (date, pair) => {
   });
 
   // Train model with early stopping
-  const history = await model.fit(X_train, y_train, {
+  const history = await tf.profile(() => model.fit(X_train, y_train, {
     epochs: 250,
     batchSize: 64, // Increase batch size for parallelism
     validationData: [X_test, y_test],
-    callbacks: [earlyStop] // Add early stopping callback
-  });
+    callbacks: [earlyStop], // Add early stopping callback
+    verbose: 1, // Print training progress
+  }));
 
   // Evaluate the model
   const loss = model.evaluate(X_test, y_test);
+  console.log(`Test loss: ${loss}`);
+
   await model.save(`file://${resolve(savedModelPath)}/${pair}`);
 };
