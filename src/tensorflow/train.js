@@ -8,8 +8,11 @@ import { resolve } from 'path';
 import { loadModel } from './model.js';
 import { savedModelPath } from '../constants.js';
 import { getFeatures } from '../utils/transform.js';
-
+import { execSync } from 'child_process';
 export const trainModel = async (date, pair) => {
+  
+  execSync(`ulimit -s 8096`);
+  
   tf.enableProdMode();
   tf.setBackend('tensorflow');
 
