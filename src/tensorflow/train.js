@@ -4,7 +4,6 @@
 *******************************************************************************/
 
 import tf from "@tensorflow/tfjs-node";
-import fs from "fs";
 import { resolve } from "path";
 import { loadModel } from './model.js';
 import { savedModelPath } from "../constants.js";
@@ -12,7 +11,7 @@ import { getFeatures } from "../utils/transform.js";
 
 export const trainModel = async function (date, pair) {
   let model = await loadModel(pair);
-  let dataset = getFeatures(pair, date, "1H");
+  let dataset = getFeatures(pair, date, "1h");
 
   const trainSize = Math.floor(dataset.length * 0.8);
   const X_train = tf.tensor2d(dataset.slice(0, trainSize).map(row => row.slice(1, 6))); // select only the open, high, low, and close values
