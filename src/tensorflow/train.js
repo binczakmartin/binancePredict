@@ -9,10 +9,8 @@ import { loadModel } from './model.js';
 import { savedModelPath } from '../constants.js';
 import { getFeatures } from '../utils/transform.js';
 import { execSync } from 'child_process';
+
 export const trainModel = async (date, pair) => {
-  
-  execSync(`ulimit -s 8096`);
-  
   tf.enableProdMode();
   tf.setBackend('tensorflow');
 
@@ -34,8 +32,8 @@ export const trainModel = async (date, pair) => {
 
   // Train model with early stopping
   const history = await tf.profile(() => model.fit(X_train, y_train, {
-    epochs: 250,
-    batchSize: 16, // Increase batch size for parallelism
+    epochs: 100,
+    batchSize: 64, // Increase batch size for parallelism
     validationData: [X_test, y_test],
     callbacks: [earlyStop], // Add early stopping callback
     verbose: 1, // Print training progress
