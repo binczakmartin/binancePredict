@@ -3,15 +3,20 @@
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-import tf from "@tensorflow/tfjs-node";
-import { resolve } from "path";
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-backend-wasm';
+import { resolve } from 'path';
 import { loadModel } from './model.js';
-import { savedModelPath } from "../constants.js";
-import { getFeatures } from "../utils/transform.js";
+import { savedModelPath } from '../constants.js';
+import { getFeatures, setThreadsCount } from '../utils/transform.js';
 
-export const trainModel = async function (date, pair) {
-  let model = await loadModel(pair);
-  let dataset = getFeatures(pair, date, "1h");
+export const trainModel = async (date, pair) => {
+  await tf.setBackend('wasm');
+  
+  setThreadsCount(8);
+
+  const model = await loadModel(pair);
+  const dataset = getFeatures(pair, date, '1h');
 
   const trainSize = Math.floor(dataset.length * 0.8);
   const X_train = tf.tensor2d(dataset.slice(0, trainSize).map(row => row.slice(1, 6))); // select only the open, high, low, and close values
@@ -29,12 +34,12 @@ export const trainModel = async function (date, pair) {
   // Train model with early stopping
   const history = await model.fit(X_train, y_train, {
     epochs: 250,
-    batch_size: 32,
-    validation_data: [X_test, y_test],
+    batchSize: 64, // Increase batch size for parallelism
+    validationData: [X_test, y_test],
     callbacks: [earlyStop] // Add early stopping callback
   });
 
   // Evaluate the model
   const loss = model.evaluate(X_test, y_test);
   await model.save(`file://${resolve(savedModelPath)}/${pair}`);
-}
+};
