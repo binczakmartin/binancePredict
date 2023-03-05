@@ -55,6 +55,8 @@ export const saveAllCandles = async function (proxies) {
       const length = Math.floor(data.length);
       data = data.slice(0, length);
       for (let elem of data) {
+        if (count == proxies.lenght) count = 0;
+        
         const proxy = proxies[count];
         pTab.push(saveCandles(elem.symbol, proxy));
         if (pTab.length % binanceSimultaneous == 0) {
