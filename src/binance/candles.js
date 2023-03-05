@@ -24,7 +24,7 @@ export const saveCandles = async function (symbol, proxy) {
           params: {
             'symbol': symbol,
             'interval': interval,
-            'limit': 1500
+            'limit': 600
           },
           proxy
         });
