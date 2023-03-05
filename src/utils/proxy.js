@@ -7,7 +7,6 @@ import fs from 'fs';
 
 export const getProxies = function() {
   const content = fs.readFileSync('./proxy/proxy.txt', {encoding: "utf8"});
-  console.log('content', content)
 
   if (!content) return [];
 

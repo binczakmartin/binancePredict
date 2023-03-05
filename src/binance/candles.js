@@ -20,7 +20,7 @@ export const saveCandles = async function (symbol, proxy) {
       dataObj[symbol] = {};
       for (var interval of intervals) {
         const response = await axios.get('https://api.binance.com/api/v3/klines', {
-          timeout: 40000,
+          timeout: 120000,
           params: {
             'symbol': symbol,
             'interval': interval,
@@ -56,7 +56,7 @@ export const saveAllCandles = async function (proxies) {
       data = data.slice(0, length);
       for (let elem of data) {
         if (count == proxies.lenght) count = 0;
-        
+
         const proxy = proxies[count];
         pTab.push(saveCandles(elem.symbol, proxy));
         if (pTab.length % binanceSimultaneous == 0) {
