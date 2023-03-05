@@ -4,19 +4,19 @@
 *******************************************************************************/
 
 import tf from "@tensorflow/tfjs-node";
-import { intervals } from "../constants";
+import { getFeatures } from "../utils/transform.js";
+import { loadModel } from './model.js';
 
 export const predictNextClose = async function (date, pair) {
-  const model = await loadModel();
-  const features = [];
+  const model = await loadModel(pair);
 
-  intervals.map((interval) => features.push(getFeatures(pair, date, interval)));
+  let data = getFeatures(pair, date, '1h');
+  data = data.map((elem) => elem.slice(1, 6));
 
-  const normalizedArrays = resizeArrays(features);
-  const tensors = normalizedArrays.features.map(f => tf.tensor2d(f, [f.length, f[0].length]));
-  const concatenated = tf.layers.concatenate().apply(tensors);
-  const prediction = model.predict(concatenated);
-  const output = prediction.dataSync()[0];
+  const newTensor = tf.tensor2d(data);
+  
+  const nextClosingPrice = model.predict(newTensor).dataSync()[0];
 
-  return output;
+  // console.log([data[data.length - 1].slice(1, 5)]);
+  console.log(`\x1b[38;5;178m${pair}\x1b[0m `, nextClosingPrice);
 };

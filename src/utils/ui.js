@@ -15,9 +15,11 @@ export const printAsciiArt = function() {
 }
 
 export const help = function() {
-  console.log('Usage: node index.js [options]');
-  console.log('Options:');
-  console.log('  -g          Download and save Binance data to data folder');
-  console.log('  -t          Train TensorFlow model for all trading pairs');
-  console.log('\n\n');
+  console.log('Usage: node index.js [options]\n');
+  console.log('Options:\n');
+  console.log('  fetch        Download and save Binance data to data folder');
+  console.log('  train        Train TensorFlow model for all trading pairs');
+  console.log('  predict      Predict crypto price with the trained model...');
+  console.log('  delete       Delete the trained model');
+  console.log('\n');
 }

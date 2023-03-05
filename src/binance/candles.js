@@ -11,7 +11,7 @@ import { intervals } from '../constants.js';
 import { getMarkets } from './markets.js';
 import { binanceSimultaneous } from '../constants.js';
 
-export const saveCandles = async function (symbol) {
+export const saveCandles = async function (symbol, proxy) {
   let dataObj = {};
   const date = moment();
 
@@ -23,8 +23,10 @@ export const saveCandles = async function (symbol) {
           timeout: 40000,
           params: {
             'symbol': symbol,
-            'interval': interval
-          }
+            'interval': interval,
+            'limit': 1500
+          },
+          proxy
         });
         await new Promise(resolve => setTimeout(resolve, 30));
         if (response.headers['x-mbx-used-weight-1m'] > 850) {
@@ -42,9 +44,10 @@ export const saveCandles = async function (symbol) {
   })
 };
 
-export const saveAllCandles = async function () {
+export const saveAllCandles = async function (proxies) {
   let dataObj = {}
   let pTab = [];
+  let count = 0;
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -52,12 +55,14 @@ export const saveAllCandles = async function () {
       const length = Math.floor(data.length);
       data = data.slice(0, length);
       for (let elem of data) {
-        pTab.push(saveCandles(elem.symbol));
+        const proxy = proxies[count];
+        pTab.push(saveCandles(elem.symbol, proxy));
         if (pTab.length % binanceSimultaneous == 0) {
           await Promise.all(pTab);
           await new Promise(resolve => setTimeout(resolve, 2600));
           pTab = [];
         }
+        count++;
       }
       await Promise.all(pTab);
       resolve(dataObj);
