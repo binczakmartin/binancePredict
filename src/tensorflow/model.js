@@ -23,15 +23,15 @@ export const loadModel = async function (pair) {
     const normalizedInput = normalizeLayer.apply(input);
 
     const dense1 = tf.layers.dense({
-      units: 100,
+      units: 120,
       activation: "relu",
     }).apply(normalizedInput);
     const dense2 = tf.layers.dense({
-      units: 98,
+      units: 90,
       activation: "relu",
     }).apply(dense1);
     const dense3 = tf.layers.dense({
-      units: 96,
+      units: 80,
       activation: "relu",
     }).apply(dense2);
     const output = tf.layers.dense({

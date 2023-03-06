@@ -56,21 +56,22 @@ const train = async function(proxies, date, limit, loop) {
   console.log(`Start ${loop} session of training\n`);
 
   for (let i = 0; i < loop; i++) {
-    // console.log('Downloading Binance data before training ..');
-    // await saveAllCandles(proxies, date.format('YYYYMMDD'), limit);
     
     console.log('Training TensorFlow model for all trading pairs...');
     for (let market of markets) {
       await trainModel(date.format('YYYYMMDD'), market.symbol);
     }
+
+    console.log('Downloading Binance data before training ..');
+    await saveAllCandles(proxies, date.format('YYYYMMDD'), limit);
   }
 }
 
 const predict = async function(proxies, date) {
   const markets = await getMarkets();
   
-  // console.log('Downloading Binance data for prediction ..');
-  // await saveAllCandles(proxies, date.format('YYYYMMDD'), predictfileSize);
+  console.log('Downloading Binance data for prediction ..');
+  await saveAllCandles(proxies, date.format('YYYYMMDD'), predictfileSize);
   
   console.log('Predict all crypto prices with the trained models...');
   for (let market of markets) {
