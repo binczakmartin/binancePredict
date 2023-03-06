@@ -15,11 +15,21 @@ export const printAsciiArt = function() {
 }
 
 export const help = function() {
-  console.log('Usage: node index.js [options]\n');
-  console.log('Options:\n');
-  console.log('  fetch        Download and save Binance data to data folder');
-  console.log('  train        Train TensorFlow model for all trading pairs');
-  console.log('  predict      Predict crypto price with the trained model...');
-  console.log('  delete       Delete the trained model');
-  console.log('\n');
+  console.log(`Usage: node index --stack-size=20000 [OPTIONS] COMMAND [ARGS]...
+
+Commands:
+
+  \x1b[38;5;11mfetch\x1b[0m    Download and save Binance data to data folder.
+
+    -p     Use proxy connection.
+  
+  \x1b[38;5;11mtrain\x1b[0m    Train TensorFlow model for all trading pairs.
+ 
+    -l     Number of loops for training. Default is 0.
+  
+  \x1b[38;5;11mpredict\x1b[0m  Predict crypto price with the trained model.
+  
+  \x1b[38;5;11mdelete\x1b[0m   Delete the trained model.
+
+`);
 }
