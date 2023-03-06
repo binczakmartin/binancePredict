@@ -27,8 +27,9 @@ export const saveCandles = async function (symbol, proxy, date, limit) {
           proxy
         });
         await new Promise(resolve => setTimeout(resolve, 30));
-        if (response.headers['x-mbx-used-weight-1m'] > 500) {
-          await new Promise(resolve => setTimeout(resolve, 40000));
+        if (response.headers['x-mbx-used-weight-1m'] > 750) {
+	  console.log('wait to avoid ban');
+          await new Promise(resolve => setTimeout(resolve, 60000));
         }
         const folder = `./data/${date}/${symbol}/${interval}/`;
         await fs.promises.mkdir(folder, { recursive: true });
@@ -61,7 +62,8 @@ export const saveAllCandles = async function (proxies, date, limit) {
         pTab.push(saveCandles(elem.symbol, proxy, date, limit));
         if (pTab.length % batchSize == 0) {
           await Promise.all(pTab);
-          await new Promise(resolve => setTimeout(resolve, 10000));
+	  console.log('batch execution');
+          await new Promise(resolve => setTimeout(resolve, 2000));
           pTab = [];
         }
         count++;
