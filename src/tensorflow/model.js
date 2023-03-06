@@ -18,30 +18,32 @@ export const loadModel = async function (pair) {
   } else {
     // Define a new model architecture
     const input = tf.input({ shape: [5] });
+    
     const normalizeLayer = tf.layers.batchNormalization({});
     const normalizedInput = normalizeLayer.apply(input);
+
     const dense1 = tf.layers.dense({
-      units: 64,
+      units: 100,
       activation: "relu",
     }).apply(normalizedInput);
     const dense2 = tf.layers.dense({
-      units: 32,
+      units: 98,
       activation: "relu",
     }).apply(dense1);
     const dense3 = tf.layers.dense({
-      units: 16,
+      units: 96,
       activation: "relu",
     }).apply(dense2);
     const output = tf.layers.dense({
       units: 1,
-      activation: "linear",
+      activation: "relu",
     }).apply(dense3);
     model = tf.model({ inputs: input, outputs: output });
   }
 
   model.compile({
     optimizer: tf.train.adam(),
-    loss: "meanSquaredError",
+    loss: "meanSquaredLogarithmicError",
   });
 
   return model;

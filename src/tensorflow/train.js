@@ -10,8 +10,8 @@ import { savedModelPath } from '../constants.js';
 import { getFeatures } from '../utils/transform.js';
 
 export const trainModel = async (date, pair) => {
-  // tf.enableProdMode();
-  // tf.setBackend('tensorflow');
+  tf.enableProdMode();
+  tf.setBackend('tensorflow');
 
   const dataset = getFeatures(pair, date, '1h');
   
@@ -24,25 +24,24 @@ export const trainModel = async (date, pair) => {
   const model = await loadModel(pair);
 
   const earlyStop = tf.callbacks.earlyStopping({
-    monitor: 'loss',
+    monitor: 'val_loss',
     patience: 50,
     restoreBestModel: true,
   });
 
   // Train model with early stopping
   const history = await tf.profile(() => model.fit(X_train, y_train, {
-    epochs: 40,
-    batchSize: 10, // Increase batch size for parallelism
-    // validationData: [X_test, y_test],
+    epochs: 250,
+    batchSize: 100, // Increase batch size for parallelism
+    validationData: [X_test, y_test],
     callbacks: [earlyStop],
     verbose: 1, // Print training progress
   }));
 
   console.log("test1")
   // Evaluate the model
-  // const loss = model.evaluate(X_test, y_test);
-  // console.log(`Test loss: ${loss}`);
-  // console.log("test2")
+  const loss = model.evaluate(X_test, y_test);
+  console.log(`Test loss: ${loss}`);
 
   await model.save(`file://${resolve(savedModelPath)}/${pair}`);
 };
