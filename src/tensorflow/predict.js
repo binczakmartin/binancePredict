@@ -14,9 +14,8 @@ export const predictNextClose = async function (date, pair) {
   data = data.map((elem) => elem.slice(1, 6));
 
   const newTensor = tf.tensor2d(data);
-  
-  const nextClosingPrice = model.predict(newTensor).dataSync()[0];
 
-  // console.log([data[data.length - 1].slice(1, 5)]);
+  const nextClosingPrice = model.predict(newTensor).dataSync()[0];
+  console.log(data[data.length - 1]);
   console.log(`\x1b[38;5;178m${pair}\x1b[0m `, nextClosingPrice);
 };

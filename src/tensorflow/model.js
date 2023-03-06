@@ -18,20 +18,20 @@ export const loadModel = async function (pair) {
   } else {
     // Define a new model architecture
     const input = tf.input({ shape: [5] });
-    
+
     const normalizeLayer = tf.layers.batchNormalization({});
     const normalizedInput = normalizeLayer.apply(input);
 
     const dense1 = tf.layers.dense({
-      units: 120,
+      units: 256,
       activation: "relu",
     }).apply(normalizedInput);
     const dense2 = tf.layers.dense({
-      units: 90,
+      units: 64,
       activation: "relu",
     }).apply(dense1);
     const dense3 = tf.layers.dense({
-      units: 80,
+      units: 16,
       activation: "relu",
     }).apply(dense2);
     const output = tf.layers.dense({
