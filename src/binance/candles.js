@@ -47,7 +47,7 @@ export const saveAllCandles = async function (proxies, date, limit) {
   let pTab = [];
   let count = 0;
 
-  const batchSize = proxies.lenght ? proxyConcurrent : concurrent;
+  const batchSize = proxies.length ? proxyConcurrent : concurrent;
   console.log("\nbatchSize", batchSize);
 
   return new Promise(async (resolve, reject) => {

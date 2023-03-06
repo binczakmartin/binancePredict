@@ -19,7 +19,7 @@ const parsearguments = async function () {
   const date = moment();
 
   let proxies = args['p'] ? getProxies() : []
-  let limit = proxies.length ? fileSize : proxyFileSize;
+  let limit = proxies.length ? proxyFileSize : fileSize;
   let loop = args['l'] ? args['l'] : 1;
 
   switch (true) {

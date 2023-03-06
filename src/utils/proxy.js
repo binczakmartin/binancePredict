@@ -9,7 +9,6 @@ export const getProxies = function() {
   const content = fs.readFileSync('./proxy/proxy.txt', {encoding: "utf8"});
 
   if (!content) return [];
-
   return content.split('\n').map((elem) => {
     const tab = elem.split(':');
   
