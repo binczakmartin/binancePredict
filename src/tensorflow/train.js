@@ -29,8 +29,8 @@ export const trainModel = async (date, pair) => {
 
   // Train model with early stopping
   const history = await tf.profile(() => model.fit(X_train, y_train, {
-    epochs: 250,
-    batchSize: 110, // Increase batch size for parallelism
+    epochs: 50,
+    batchSize: 100, // Increase batch size for parallelism
     validationData: [X_test, y_test],
     callbacks: [earlyStop],
     verbose: 1, // Print training progress
