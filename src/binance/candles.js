@@ -1,38 +1,36 @@
 
 /*******************************************************************************
-** Get Binance Klines data
+** Get binance candles files
 ** BINCZAK Martin - 2023
 *******************************************************************************/
 
-import axios from 'axios';
 import fs from 'fs';
-import moment from 'moment';
+import axios from 'axios';
 import { intervals } from '../constants.js';
 import { getMarkets } from './markets.js';
-import { binanceSimultaneous } from '../constants.js';
+import { proxyConcurrent, concurrent } from '../constants.js';
 
-export const saveCandles = async function (symbol, proxy) {
+export const saveCandles = async function (symbol, proxy, date, limit) {
   let dataObj = {};
-  const date = moment();
 
   return new Promise(async (resolve, reject) => {
     try {
       dataObj[symbol] = {};
       for (var interval of intervals) {
         const response = await axios.get('https://api.binance.com/api/v3/klines', {
-          timeout: 120000,
+          timeout: 180000,
           params: {
             'symbol': symbol,
             'interval': interval,
-            'limit': 1500
+            'limit': limit
           },
           proxy
         });
         await new Promise(resolve => setTimeout(resolve, 30));
-        if (response.headers['x-mbx-used-weight-1m'] > 850) {
-          await new Promise(resolve => setTimeout(resolve, 60000));
+        if (response.headers['x-mbx-used-weight-1m'] > 500) {
+          await new Promise(resolve => setTimeout(resolve, 40000));
         }
-        const folder = `./data/${date.format('YYYYMMDD')}/${symbol}/${interval}/`;
+        const folder = `./data/${date}/${symbol}/${interval}/`;
         await fs.promises.mkdir(folder, { recursive: true });
         fs.writeFileSync(`${folder}/kline.json`, JSON.stringify(response.data));
         dataObj[symbol][interval] = response.data;
@@ -44,10 +42,13 @@ export const saveCandles = async function (symbol, proxy) {
   })
 };
 
-export const saveAllCandles = async function (proxies) {
+export const saveAllCandles = async function (proxies, date, limit) {
   let dataObj = {}
   let pTab = [];
   let count = 0;
+
+  const batchSize = proxies.lenght ? proxyConcurrent : concurrent;
+  console.log("\nbatchSize", batchSize);
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -56,12 +57,11 @@ export const saveAllCandles = async function (proxies) {
       data = data.slice(0, length);
       for (let elem of data) {
         if (count == proxies.lenght) count = 0;
-
         const proxy = proxies[count];
-        pTab.push(saveCandles(elem.symbol, proxy));
-        if (pTab.length % binanceSimultaneous == 0) {
+        pTab.push(saveCandles(elem.symbol, proxy, date, limit));
+        if (pTab.length % batchSize == 0) {
           await Promise.all(pTab);
-          await new Promise(resolve => setTimeout(resolve, 2600));
+          await new Promise(resolve => setTimeout(resolve, 10000));
           pTab = [];
         }
         count++;
