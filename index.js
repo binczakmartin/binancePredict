@@ -12,7 +12,7 @@ import { trainModel } from './src/tensorflow/train.js';
 import { predictNextClose } from './src/tensorflow/predict.js'
 import { getProxies } from './src/utils/proxy.js';
 import { deletePathContents } from './src/utils/misc.js';
-import { proxyFileSize, fileSize } from './src/constants.js';
+import { proxyFileSize, fileSize, predictfileSize } from './src/constants.js';
 
 const parsearguments = async function () {
   const args = argsParser(process.argv);
