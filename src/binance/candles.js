@@ -28,7 +28,7 @@ export const saveCandles = async function (symbol, proxy, date, limit) {
         });
         await new Promise(resolve => setTimeout(resolve, 30));
         if (response.headers['x-mbx-used-weight-1m'] > 750) {
-	  console.log('wait to avoid ban');
+	        console.log('wait to avoid ban');
           await new Promise(resolve => setTimeout(resolve, 60000));
         }
         const folder = `./data/${date}/${symbol}/${interval}/`;
@@ -62,8 +62,8 @@ export const saveAllCandles = async function (proxies, date, limit) {
         pTab.push(saveCandles(elem.symbol, proxy, date, limit));
         if (pTab.length % batchSize == 0) {
           await Promise.all(pTab);
-	  console.log('batch execution');
-          await new Promise(resolve => setTimeout(resolve, 2000));
+	        console.log('batch execution');
+          await new Promise(resolve => setTimeout(resolve, 1000));
           pTab = [];
         }
         count++;
