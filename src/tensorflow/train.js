@@ -12,7 +12,7 @@ import { getFeatures } from '../utils/transform.js';
 export const trainModel = async (date, pair) => {
   console.log("training pair ", pair)
   const dataset = getFeatures(pair, date, '1h');
-  const trainSize = Math.floor(dataset.length * 0.6);
+  const trainSize = Math.floor(dataset.length * 0.75);
 
   const X_train = tf.tensor2d(dataset.slice(0, trainSize).map(row => row.slice(1, 6)));
   const Y_train = tf.tensor1d(dataset.slice(0, trainSize).map(row => row[4]));
@@ -30,7 +30,7 @@ export const trainModel = async (date, pair) => {
   // Train model with early stopping
   const history = await tf.profile(() => model.fit(X_train, Y_train, {
     epochs: 150,
-    batchSize: 1024, // Increase batch size for parallelism
+    batchSize: 2048, // Increase batch size for parallelism
     validationData: [X_test, Y_test],
     callbacks: [earlyStop],
     verbose: 1, // Print training progress

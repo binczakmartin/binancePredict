@@ -63,7 +63,7 @@ export const saveAllCandles = async function (proxies, date, limit) {
         if (pTab.length % batchSize == 0) {
           await Promise.all(pTab);
 	        console.log('batch execution');
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 35000));
           pTab = [];
         }
         count++;
